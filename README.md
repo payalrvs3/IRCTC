@@ -1,4 +1,4 @@
-# IRCTC Clone — Django REST API Backend
+# IRCTC Clone
 
 A full-featured Indian Railways ticket booking backend built with **Django 4.x + Django REST Framework + JWT Auth**.
 
@@ -10,7 +10,7 @@ A full-featured Indian Railways ticket booking backend built with **Django 4.x +
 |---|---|
 | Framework | Django 4.x |
 | API | Django REST Framework |
-| Auth | JWT (SimpleJWT) — Access + Refresh tokens |
+| Auth | JWT (SimpleJWT) - Access + Refresh tokens |
 | Database | SQLite (dev) / PostgreSQL (prod) |
 | CORS | django-cors-headers |
 
@@ -90,92 +90,6 @@ python manage.py runserver
 | GET | `/my-bookings/` | Bearer | List user's bookings |
 | GET | `/<id>/` | Bearer | Booking detail |
 | POST | `/<id>/cancel/` | Bearer | Cancel booking + auto refund calc |
-
----
-
-## Request / Response Examples
-
-### Register
-```json
-POST /api/auth/register/
-{
-  "username": "rahul99",
-  "email": "rahul@example.com",
-  "password": "MyPass@123",
-  "password2": "MyPass@123",
-  "first_name": "Rahul",
-  "last_name": "Sharma",
-  "phone": "9876543210"
-}
-```
-
-### Search Trains
-```
-GET /api/trains/search/?from=CSTM&to=NDLS&date=2026-05-01
-```
-```json
-{
-  "from": "CSTM", "to": "NDLS", "date": "2026-05-01",
-  "total_trains": 3,
-  "trains": [
-    {
-      "number": "12301",
-      "name": "Howrah Rajdhani Express",
-      "train_type_display": "Rajdhani",
-      "departure_time": "16:35:00",
-      "arrival_time": "10:05:00",
-      "duration_display": "17h 30m",
-      "distance_km": 1390,
-      "running_days": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
-      "pantry_car": true,
-      "availability": [
-        { "coach_class": "1A", "available_seats": 3, "base_fare": "4800.00", "status": "AVBL 3" },
-        { "coach_class": "2A", "available_seats": 12, "base_fare": "2900.00", "status": "AVBL 12" },
-        { "coach_class": "3A", "available_seats": 0, "waitlist_count": 4, "base_fare": "2050.00", "status": "WL 4" }
-      ]
-    }
-  ]
-}
-```
-
-### Book Ticket
-```json
-POST /api/bookings/book/
-Authorization: Bearer <token>
-
-{
-  "train_number": "12301",
-  "coach_class": "3A",
-  "journey_date": "2026-05-01",
-  "boarding_station_code": "CSTM",
-  "destination_station_code": "NDLS",
-  "quota": "GN",
-  "mobile": "9876543210",
-  "email": "rahul@example.com",
-  "passengers": [
-    { "name": "Rahul Sharma", "age": 28, "gender": "M", "berth_preference": "LB" },
-    { "name": "Priya Sharma", "age": 25, "gender": "F", "berth_preference": "LB" }
-  ]
-}
-```
-
-### PNR Status
-```
-GET /api/bookings/pnr/0733367896/
-```
-```json
-{
-  "pnr": "0733367896",
-  "train_number": "12301",
-  "train_name": "Howrah Rajdhani Express",
-  "status": "CNF",
-  "status_display": "Confirmed",
-  "passengers": [
-    { "name": "Rahul Sharma", "coach_number": "B2", "seat_number": "34",
-      "berth_allotted": "LB", "status_display": "Confirmed" }
-  ]
-}
-```
 
 ---
 
