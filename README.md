@@ -1,4 +1,4 @@
-# IRCTC Clone
+# IRCTC Booking System
 
 A full-featured Indian Railways ticket booking backend built with **Django 4.x + Django REST Framework + JWT Auth**.
 
