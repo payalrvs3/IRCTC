@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Bookings — IRCTC</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.booking-card{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;transition:.2s;box-shadow:var(--card-shadow)}
+.booking-card:hover{box-shadow:var(--card-shadow-hover)}
+.bcard-head{display:flex;align-items:center;padding:11px 16px;background:#fafbff;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.bcard-body{display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;padding:14px 18px;gap:10px}
+.bcard-footer{display:flex;align-items:center;padding:10px 16px;border-top:1px solid var(--border);gap:8px;flex-wrap:wrap;background:#fafbff}
+.bcard-action{background:#f1f5f9;border:1px solid var(--border);padding:6px 13px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;color:var(--text)}
+.bcard-action:hover{background:var(--light);color:var(--blue);border-color:var(--blue2)}
+.bcard-action.danger:hover{background:var(--red-bg);color:var(--red);border-color:var(--red)}
+.filter-tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+.ftab{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:13px;font-weight:500;cursor:pointer;color:var(--muted);transition:.15s}
+.ftab.active{border-color:var(--blue2);background:var(--light);color:var(--blue);font-weight:600}
+.pnr-num{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--blue);background:var(--light);padding:3px 9px;border-radius:5px;letter-spacing:1px}
+.summary-card{background:#fff;border:1px solid var(--border);border-radius:11px;padding:1.25rem;text-align:center;box-shadow:var(--card-shadow)}
+</style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="hero" style="padding-bottom:16px">
+  <h1 class="hero-title">My Bookings</h1>
+  <p class="hero-sub">View and manage all your train bookings in one place</p>
+</div>
+
+<div class="section">
+  <div id="logged-out" class="hidden">
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:4rem;text-align:center;box-shadow:var(--card-shadow)">
+      <div style="font-size:52px;margin-bottom:16px">&#128272;</div>
+      <div style="font-size:18px;font-weight:700;color:var(--dark);margin-bottom:6px">Please login to view your bookings</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:1.5rem">Your upcoming and past journeys will appear here after login</div>
+      <button class="btn-orange-full" style="max-width:200px;margin:0 auto" onclick="showLoginModal()">Login to IRCTC</button>
+    </div>
+  </div>
+
+  <div id="logged-in">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem" id="summary-cards"></div>
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="filterBookings('all',this)">All Bookings</button>
+      <button class="ftab" onclick="filterBookings('upcoming',this)">Upcoming</button>
+      <button class="ftab" onclick="filterBookings('completed',this)">Completed</button>
+      <button class="ftab" onclick="filterBookings('cancelled',this)">Cancelled</button>
+    </div>
+    <div id="bookings-list"></div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<div id="modals-placeholder"></div>
+
+<script src="shared.js"></script>
+<script>
+document.getElementById('nav-placeholder').innerHTML = navbar('');
+document.getElementById('footer-placeholder').innerHTML = footer();
+document.getElementById('modals-placeholder').innerHTML = bookingModal() + loginModal();
+
+document.getElementById('logged-out').classList.add('hidden');
+document.getElementById('logged-in').classList.remove('hidden');
+
+var summaryData = [
+  {num:'3',label:'Total Bookings',color:'var(--blue)'},
+  {num:'1',label:'Upcoming Journeys',color:'var(--green)'},
+  {num:'2',label:'Completed Trips',color:'var(--muted)'},
+  {num:'&#8377;3,245',label:'Total Savings',color:'var(--orange)'}
+];
+var sc = document.getElementById('summary-cards');
+for (var i = 0; i < summaryData.length; i++) {
+  var d = document.createElement('div');
+  d.className = 'summary-card';
+  d.innerHTML = '<div style="font-family:Rajdhani,sans-serif;font-size:26px;font-weight:700;color:' + summaryData[i].color + '">' + summaryData[i].num + '</div>'
+    + '<div style="font-size:12px;color:var(--muted);margin-top:4px;font-weight:500">' + summaryData[i].label + '</div>';
+  sc.appendChild(d);
+}
+
+var allBookings = [
+  {pnr:'5901234567',status:'upcoming',statusLabel:'Confirmed',train:'12301 Howrah Rajdhani Express',type:'Rajdhani',
+   from:'CSTM',fromName:'Mumbai CST',to:'NDLS',toName:'New Delhi',
+   dep:'16:35',arr:'10:05',date:'Apr 25, 2026',cls:'3A \u2014 Third AC',fare:'&#8377;2,196',seats:'B3/22 LB',pax:1},
+  {pnr:'4890123456',status:'completed',statusLabel:'Completed',train:'12431 Rajdhani Express',type:'Rajdhani',
+   from:'NDLS',fromName:'New Delhi',to:'HWH',toName:'Howrah',
+   dep:'16:55',arr:'09:55',date:'Feb 20, 2026',cls:'2A \u2014 Second AC',fare:'&#8377;3,290',seats:'A1/8 LB',pax:2},
+  {pnr:'3789012345',status:'completed',statusLabel:'Completed',train:'12009 Mumbai Shatabdi',type:'Shatabdi',
+   from:'CSTM',fromName:'Mumbai CST',to:'PUNE',toName:'Pune',
+   dep:'06:25',arr:'08:30',date:'Jan 10, 2026',cls:'CC \u2014 Chair Car',fare:'&#8377;1,378',seats:'C4/56',pax:2}
+];
+
+function renderBookings(filter) {
+  var list = filter === 'all' ? allBookings : allBookings.filter(function(b){return b.status===filter;});
+  var container = document.getElementById('bookings-list');
+  if (!list.length) {
+    container.innerHTML = '<div style="text-align:center;padding:3rem;background:#fff;border-radius:12px;border:1px solid var(--border)">'
+      + '<div style="font-size:44px;margin-bottom:12px">&#128237;</div>'
+      + '<div style="font-size:16px;font-weight:700;color:var(--dark)">No bookings found</div>'
+      + '<div style="color:var(--muted);font-size:13px;margin-top:4px">Try a different filter or book a new ticket</div>'
+      + '<button class="btn-orange-full" style="max-width:180px;margin:12px auto 0" onclick="window.location=\'index.html\'">Book a Ticket</button>'
+      + '</div>';
+    return;
+  }
+  container.innerHTML = '';
+  list.forEach(function(b) {
+    var isUp = b.status === 'upcoming';
+    var div = document.createElement('div');
+    div.className = 'booking-card';
+    div.innerHTML = '<div class="bcard-head">'
+      + '<span class="pnr-num">' + b.pnr + '</span>'
+      + '<span style="font-family:Rajdhani,sans-serif;font-size:16px;font-weight:700;color:var(--dark)">' + b.train + '</span>'
+      + '<span style="font-size:10px;color:var(--muted);background:#f1f5f9;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.4px">' + b.type + '</span>'
+      + '<span class="badge ' + (isUp ? 'green' : 'blue') + '" style="margin-left:auto">' + b.statusLabel + '</span>'
+      + '</div>'
+      + '<div class="bcard-body">'
+      + '<div><div style="font-family:Rajdhani,sans-serif;font-size:24px;font-weight:700">' + b.dep + '</div>'
+      + '<div style="font-size:13px;font-weight:700;color:var(--blue2)">' + b.from + '</div>'
+      + '<div style="font-size:11px;color:var(--muted)">' + b.fromName + '</div></div>'
+      + '<div style="text-align:center;padding:0 10px">'
+      + '<div style="display:flex;align-items:center;gap:4px;margin:4px 0">'
+      + '<div style="width:6px;height:6px;border-radius:50%;background:var(--blue2)"></div>'
+      + '<div style="height:2px;background:var(--border);width:50px"></div>'
+      + '<div style="width:6px;height:6px;border-radius:50%;background:var(--blue2)"></div>'
+      + '</div>'
+      + '<div style="font-size:11px;color:var(--muted)">' + b.date + '</div>'
+      + '</div>'
+      + '<div style="text-align:right">'
+      + '<div style="font-family:Rajdhani,sans-serif;font-size:24px;font-weight:700">' + b.arr + '</div>'
+      + '<div style="font-size:13px;font-weight:700;color:var(--blue2)">' + b.to + '</div>'
+      + '<div style="font-size:11px;color:var(--muted)">' + b.toName + '</div></div>'
+      + '<div style="text-align:right">'
+      + '<div style="font-size:11px;color:var(--muted)">Class</div>'
+      + '<div style="font-size:13px;font-weight:600;color:var(--dark)">' + b.cls + '</div>'
+      + '<div style="font-size:11px;color:var(--muted);margin-top:4px">Seat</div>'
+      + '<div style="font-size:13px;font-weight:700;color:var(--green)">' + b.seats + '</div>'
+      + '</div></div>'
+      + '<div class="bcard-footer">'
+      + '<div style="font-size:13px"><span style="color:var(--muted)">Fare:</span> <span style="font-weight:700;font-family:Rajdhani,sans-serif;font-size:15px;color:var(--blue)">' + b.fare + '</span></div>'
+      + '<div style="font-size:12px;color:var(--muted)">' + b.pax + ' passenger(s)</div>'
+      + '<div style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">'
+      + '<button class="bcard-action" onclick="window.location=\'pnr.html\'">&#128203; PNR Status</button>'
+      + '<button class="bcard-action" onclick="alert(\'Downloading ticket for PNR ' + b.pnr + '\')">&#128229; Download</button>'
+      + (isUp ? '<button class="bcard-action" onclick="window.location=\'services.html\'">&#127869; Order Food</button>' : '')
+      + (isUp ? '<button class="bcard-action danger" onclick="cancelBooking(\'' + b.pnr + '\')">&#x2715; Cancel</button>' : '')
+      + (!isUp ? '<button class="bcard-action" onclick="alert(\'Rebooking journey...\')">&#128260; Rebook</button>' : '')
+      + '</div></div>';
+    container.appendChild(div);
+  });
+}
+
+function filterBookings(filter, el) {
+  document.querySelectorAll('.ftab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  renderBookings(filter);
+}
+
+function cancelBooking(pnr) {
+  if (confirm('Cancel booking PNR ' + pnr + '?\nRefund will be credited per cancellation policy.')) {
+    alert('Booking cancelled.\nRefund of approx. \u20b91,647 will be credited within 5\u20137 working days.');
+  }
+}
+
+renderBookings('all');
+</script>
+</body>
+</html>

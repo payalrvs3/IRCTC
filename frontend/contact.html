@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Contact Us — IRCTC</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.contact-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:1.75rem}
+.cinfo-item{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)}
+.cinfo-icon{width:44px;height:44px;border-radius:10px;background:var(--light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.helpdesk-card{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-radius:12px;padding:1.75rem}
+.faq-item{border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:8px}
+.faq-q{padding:14px 16px;font-weight:700;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:#fff;transition:background .15s;user-select:none}
+.faq-q:hover{background:#f8fafc}
+.faq-a{padding:12px 16px;font-size:13px;color:var(--muted);background:#f8fafc;border-top:1px solid var(--border);line-height:1.6;display:none}
+.reg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+</style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="hero" style="padding-bottom:16px">
+  <h1 class="hero-title">Contact Us</h1>
+  <p class="hero-sub">We're here to help — 24×7 support for all your IRCTC queries</p>
+</div>
+
+<div class="section">
+  <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:24px;margin-bottom:2rem">
+
+    <!-- LEFT: CONTACT INFO -->
+    <div>
+      <div class="helpdesk-card" style="margin-bottom:14px">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;margin-bottom:12px">24×7 Customer Helpdesk</div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.15);border-radius:8px;padding:12px;margin-bottom:8px">
+          <span style="font-size:24px">📞</span>
+          <div>
+            <div style="font-size:11px;opacity:.7;font-weight:700;text-transform:uppercase;letter-spacing:.4px">Toll Free Helpline</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:1px">1800-110-139</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.15);border-radius:8px;padding:12px">
+          <span style="font-size:24px">💬</span>
+          <div>
+            <div style="font-size:11px;opacity:.7;font-weight:700;text-transform:uppercase;letter-spacing:.4px">WhatsApp Support</div>
+            <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700">+91 9717680982</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-card" style="margin-bottom:14px">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;margin-bottom:4px">Contact Information</div>
+        <div class="cinfo-item">
+          <div class="cinfo-icon">✉️</div>
+          <div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:2px">Email Support</div>
+            <div style="font-size:13px;color:var(--blue)">care@irctc.co.in</div>
+            <div style="font-size:11px;color:var(--muted)">Response within 24 hours</div>
+          </div>
+        </div>
+        <div class="cinfo-item">
+          <div class="cinfo-icon">🏢</div>
+          <div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:2px">Registered Office</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.5">B-148, 11th Floor, Statesman House,<br>Barakhamba Road, New Delhi — 110001</div>
+          </div>
+        </div>
+        <div class="cinfo-item">
+          <div class="cinfo-icon">🏛️</div>
+          <div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:2px">Corporate Office</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.5">Internet Ticketing Centre, IRCTC Ltd,<br>New Delhi Railway Station — 110055</div>
+          </div>
+        </div>
+        <div class="cinfo-item" style="border:none">
+          <div class="cinfo-icon">⏰</div>
+          <div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:2px">Working Hours</div>
+            <div style="font-size:13px;color:var(--muted)">Helpline: 24×7 all days<br>Office: Mon–Sat, 9:30 AM – 6:00 PM</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;margin-bottom:10px">Regional Offices</div>
+        <div id="regional-offices" class="reg-grid"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: SUPPORT TICKET FORM -->
+    <div>
+      <div class="contact-card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--dark);margin-bottom:16px">🎫 Raise a Support Ticket</div>
+        <div class="frow" style="margin-bottom:10px">
+          <div class="fgrp"><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Full Name *</label><input type="text" placeholder="Your full name"></div>
+          <div class="fgrp"><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Email Address *</label><input type="email" placeholder="your@email.com"></div>
+        </div>
+        <div class="frow" style="margin-bottom:10px">
+          <div class="fgrp"><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Mobile Number</label><input type="tel" placeholder="10-digit mobile"></div>
+          <div class="fgrp"><label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">PNR Number (if applicable)</label><input type="text" placeholder="XXXXXXXXXX"></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Issue Category *</label>
+          <select style="border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;font-family:'Noto Sans',sans-serif;outline:none;width:100%">
+            <option value="">Select issue type</option>
+            <option>Booking / Ticketing Issue</option>
+            <option>Cancellation &amp; Refund</option>
+            <option>PNR Status / Waitlist</option>
+            <option>e-Catering Complaint</option>
+            <option>Payment / Transaction Issue</option>
+            <option>Account / Login Issue</option>
+            <option>Train Delay / Cancellation</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div style="margin-bottom:10px">
+          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:6px">Priority</label>
+          <div style="display:flex;gap:16px">
+            <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="pri" checked> Normal</label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="pri"> Urgent</label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer"><input type="radio" name="pri"> Critical</label>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Describe Your Issue *</label>
+          <textarea rows="5" style="border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:14px;font-family:'Noto Sans',sans-serif;outline:none;width:100%;resize:vertical" placeholder="Please describe your issue in detail. Include relevant dates, train numbers, and any error messages you encountered."></textarea>
+        </div>
+        <div style="margin-bottom:14px">
+          <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Attachment (optional)</label>
+          <input type="file" style="font-size:12px;padding:6px;border:1.5px solid var(--border);border-radius:8px;width:100%">
+        </div>
+        <button onclick="submitTicket()" class="btn-orange-full" style="margin-top:0">Submit Support Ticket</button>
+        <div id="ticket-success" class="hidden" style="margin-top:14px;background:#dcfce7;border:1px solid #86efac;border-radius:8px;padding:12px 14px;font-size:13px;color:#166534;font-weight:600">
+          ✅ Ticket submitted successfully! You will receive a confirmation email with your ticket ID within 5 minutes. Our team will respond within 4 working hours.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="sec-title">❓ <span>Frequently Asked Questions</span></div>
+  <div id="faq-container" style="max-width:760px"></div>
+</div>
+
+<div id="footer-placeholder"></div>
+<div id="modals-placeholder"></div>
+
+<script src="shared.js"></script>
+<script>
+document.getElementById('nav-placeholder').innerHTML = navbar('contact');
+document.getElementById('footer-placeholder').innerHTML = footer();
+document.getElementById('modals-placeholder').innerHTML = loginModal();
+
+// ---- REGIONAL OFFICES ----
+var offices = [
+  ['Mumbai','022-22694059'],
+  ['Chennai','044-25358880'],
+  ['Kolkata','033-22435527'],
+  ['Bengaluru','080-22297950']
+];
+var officesDiv = document.getElementById('regional-offices');
+offices.forEach(function(o) {
+  var div = document.createElement('div');
+  div.style.cssText = 'background:#f8fafc;border-radius:8px;padding:10px;border:1px solid var(--border)';
+  div.innerHTML = '<div style="font-weight:700;font-size:13px;color:var(--dark)">' + o[0] + '</div>'
+    + '<div style="font-size:12px;color:var(--blue);margin-top:2px">' + o[1] + '</div>';
+  officesDiv.appendChild(div);
+});
+
+// ---- FAQ ----
+var faqs = [
+  ['How do I cancel my ticket and get a refund?',
+   'You can cancel your ticket up to 4 hours before departure for regular quota, or before chart preparation for Tatkal. Log in to your account, go to My Bookings, select the booking, and click Cancel. Refunds are processed to your original payment method within 5-7 working days.'],
+  ['What is the Tatkal booking window?',
+   'Tatkal booking opens 1 day before the date of journey at 10:00 AM for AC classes and 11:00 AM for Non-AC classes. Premium Tatkal has no waitlisting.'],
+  ['Why is my PNR still on Waitlist?',
+   "Waitlist tickets get confirmed as people cancel their confirmed bookings. If your ticket doesn't get confirmed before chart preparation (usually 4-6 hours before departure), it will be automatically cancelled and you'll receive a full refund."],
+  ['Can I change the passenger name after booking?',
+   'Passenger names cannot be changed after booking. However, in some cases, one passenger can be substituted. Contact our helpline at 1800-110-139 for such requests.'],
+  ['What are the payment options available?',
+   'IRCTC accepts UPI (GPay, PhonePe, Paytm, BHIM), Net Banking (all major banks), Debit/Credit Cards (Visa, Mastercard, RuPay, Amex), IRCTC Wallet, and Pay Later options.'],
+  ['How do I download my e-ticket?',
+   'After booking, your e-ticket is emailed to your registered email. You can also download it from My Bookings in the IRCTC app or website. The e-ticket is a valid travel document on its own.'],
+  ['What should I do if my payment failed but amount was deducted?',
+   "Failed transaction refunds are processed automatically within 5-7 working days. If it's been longer, raise a support ticket with your transaction ID, and we'll investigate within 24 hours."]
+];
+var faqContainer = document.getElementById('faq-container');
+faqs.forEach(function(faq) {
+  var item = document.createElement('div');
+  item.className = 'faq-item';
+  var q = document.createElement('div');
+  q.className = 'faq-q';
+  q.innerHTML = '<span>' + faq[0] + '</span><span class="faq-arrow" style="color:var(--muted);transition:color .15s">▼</span>';
+  var a = document.createElement('div');
+  a.className = 'faq-a';
+  a.textContent = faq[1];
+  q.onclick = function() {
+    var open = a.style.display === 'block';
+    a.style.display = open ? 'none' : 'block';
+    var arrow = q.querySelector('.faq-arrow');
+    arrow.textContent = open ? '▼' : '▲';
+    arrow.style.color = open ? 'var(--muted)' : 'var(--blue)';
+  };
+  item.appendChild(q);
+  item.appendChild(a);
+  faqContainer.appendChild(item);
+});
+
+// ---- HOW TO STEPS ----
+function submitTicket() {
+  document.getElementById('ticket-success').classList.remove('hidden');
+  document.getElementById('ticket-success').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+</script>
+</body>
+</html>

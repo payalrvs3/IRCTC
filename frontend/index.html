@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>IRCTC — Book Train Tickets Online</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.stats-strip{background:linear-gradient(135deg,#071e52,#0a3d91);padding:2.5rem 1rem}
+.stat-glass{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:1.25rem;text-align:center;backdrop-filter:blur(4px)}
+.stat-num{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:#fff;line-height:1}
+.stat-lbl{font-size:11px;color:rgba(255,255,255,.65);margin-top:5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.qcard{background:#fff;border:1px solid var(--border);border-radius:11px;padding:14px 8px;text-align:center;cursor:pointer;transition:.2s;box-shadow:var(--card-shadow)}
+.qcard:hover{border-color:var(--blue2);box-shadow:0 4px 16px rgba(29,110,230,.12);transform:translateY(-2px)}
+.qcard .qi{font-size:24px;margin-bottom:6px}
+.qcard .qn{font-size:11px;font-weight:600;color:var(--dark);line-height:1.3}
+.tpill{background:#fff;border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12px;cursor:pointer;transition:.15s;display:inline-block;margin:3px;font-weight:500}
+.tpill:hover{border-color:var(--blue2);color:var(--blue2);background:var(--light)}
+.news-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);gap:12px}
+.news-item:last-child{border-bottom:none;padding-bottom:0}
+.offer-card{border-radius:12px;padding:1.5rem;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.offer-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.2)}
+.offer-card h4{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;margin-bottom:6px}
+.offer-card p{font-size:12px;opacity:.85;line-height:1.6}
+.offer-tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;margin-top:10px;background:rgba(255,255,255,.25);color:#fff;text-transform:uppercase;letter-spacing:.5px}
+.quick-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
+@media(max-width:700px){.quick-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:400px){.quick-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="hero">
+  <h1 class="hero-title">India's #1 Train Booking Platform</h1>
+  <p class="hero-sub">Book tickets for 13,000+ trains &nbsp;·&nbsp; Instant PNR confirmation &nbsp;·&nbsp; Secure payments</p>
+  <div class="tab-bar" style="margin-bottom:0">
+    <button class="htab active" id="tab-book" onclick="switchTab('book',this)">Book Tickets</button>
+    <button class="htab" id="tab-trains" onclick="switchTab('trains',this)">Train Search</button>
+    <button class="htab" id="tab-pnr" onclick="switchTab('pnr',this)">PNR Status</button>
+    <button class="htab" id="tab-services" onclick="switchTab('services',this)">Services</button>
+  </div>
+  <div style="height:14px"></div>
+</div>
+
+<div class="section" style="margin-top:1.5rem">
+  <div id="sf-placeholder"></div>
+
+  <div id="results-area" class="hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div class="sec-title" style="margin-bottom:0">&#128650; <span id="results-heading">Results</span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <span class="cchip sel" data-type="" onclick="filterTrains('',this)">All</span>
+        <span class="cchip" data-type="RAJ" onclick="filterTrains('RAJ',this)">Rajdhani</span>
+        <span class="cchip" data-type="SHT" onclick="filterTrains('SHT',this)">Shatabdi</span>
+        <span class="cchip" data-type="DUR" onclick="filterTrains('DUR',this)">Duronto</span>
+        <span class="cchip" data-type="MAIL" onclick="filterTrains('MAIL',this)">Mail</span>
+        <select onchange="sortTrains(this.value)" style="border:1.5px solid var(--border);border-radius:7px;padding:5px 8px;font-size:12px;outline:none;background:#fff">
+          <option value="dep">Sort: Departure</option>
+          <option value="dur">Sort: Duration</option>
+          <option value="arr">Sort: Arrival</option>
+        </select>
+      </div>
+    </div>
+    <div id="train-list"></div>
+  </div>
+</div>
+
+<div class="stats-strip">
+  <div style="max-width:980px;margin:0 auto">
+    <div style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,.5);text-align:center;margin-bottom:1.25rem;text-transform:uppercase;letter-spacing:1px">IRCTC AT A GLANCE</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px" id="stats-grid"></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">&#9889; <span>Quick Services</span></div>
+  <div class="quick-grid">
+    <div class="qcard" onclick="window.location='pnr.html'"><div class="qi">&#128203;</div><div class="qn">PNR Status</div></div>
+    <div class="qcard" onclick="window.location='services.html'"><div class="qi">&#128205;</div><div class="qn">Live Train</div></div>
+    <div class="qcard" onclick="window.location='services.html'"><div class="qi">&#127869;</div><div class="qn">e-Catering</div></div>
+    <div class="qcard" onclick="window.location='services.html'"><div class="qi">&#128649;</div><div class="qn">Platform Info</div></div>
+    <div class="qcard" onclick="window.location='services.html'"><div class="qi">&#128276;</div><div class="qn">Train Alert</div></div>
+    <div class="qcard" onclick="window.location='services.html'"><div class="qi">&#128197;</div><div class="qn">Season Pass</div></div>
+    <div class="qcard" onclick="window.location='services.html'"><div class="qi">&#127956;</div><div class="qn">Tour Packages</div></div>
+    <div class="qcard" onclick="window.location='services.html'"><div class="qi">&#9855;</div><div class="qn">Divyaang</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sec-title">&#128293; <span>Trending Routes</span></div>
+  <div id="trending-routes"></div>
+</div>
+
+<div class="section">
+  <div class="sec-title">&#127915; <span>Offers &amp; Promotions</span></div>
+  <div class="grid3">
+    <div class="offer-card" style="background:linear-gradient(135deg,#071e52,#1a5ec8);color:#fff">
+      <h4>Tatkal Booking Open!</h4>
+      <p>Book Tatkal tickets 1 day before departure. Limited seats &mdash; book fast!</p>
+      <span class="offer-tag">Available Now</span>
+    </div>
+    <div class="offer-card" style="background:linear-gradient(135deg,#c2410c,#f97316);color:#fff">
+      <h4>IRCTC Wallet Cashback</h4>
+      <p>Get 10% cashback up to &#8377;200 when you pay via IRCTC Wallet. Valid till 31 Dec.</p>
+      <span class="offer-tag">Limited Period</span>
+    </div>
+    <div class="offer-card" style="background:linear-gradient(135deg,#15803d,#22c55e);color:#fff">
+      <h4>Senior Citizen Concession</h4>
+      <p>50% concession for women aged 58+ and men aged 60+ on all train classes.</p>
+      <span class="offer-tag">Always On</span>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:1.5rem;box-shadow:var(--card-shadow)">
+    <div class="sec-title" style="margin-bottom:.75rem">&#128240; <span>Latest Updates</span></div>
+    <div id="news-container"></div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<div id="modals-placeholder"></div>
+
+<script src="shared.js"></script>
+<script>
+document.getElementById('nav-placeholder').innerHTML = navbar('home');
+document.getElementById('footer-placeholder').innerHTML = footer();
+document.getElementById('modals-placeholder').innerHTML = bookingModal() + loginModal();
+document.getElementById('sf-placeholder').innerHTML = searchForm();
+
+function switchTab(name, el) {
+  document.querySelectorAll('.htab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  if (name === 'trains') { window.location = 'trains.html'; return; }
+  if (name === 'pnr')    { window.location = 'pnr.html'; return; }
+  if (name === 'services') { window.location = 'services.html'; return; }
+}
+
+var statsData = [
+  ['1.4B+','Tickets Booked Annually'],
+  ['13,000+','Trains Running Daily'],
+  ['8,000+','Railway Stations'],
+  ['23M+','Registered Users']
+];
+var sg = document.getElementById('stats-grid');
+for (var i = 0; i < statsData.length; i++) {
+  var d = document.createElement('div');
+  d.className = 'stat-glass';
+  d.innerHTML = '<div class="stat-num">' + statsData[i][0] + '</div><div class="stat-lbl">' + statsData[i][1] + '</div>';
+  sg.appendChild(d);
+}
+
+var routes = [
+  ['Mumbai CST (CSTM)','New Delhi (NDLS)','Mumbai \u2192 Delhi'],
+  ['New Delhi (NDLS)','Chennai Central (MAS)','Delhi \u2192 Chennai'],
+  ['Mumbai CST (CSTM)','Howrah Junction (HWH)','Mumbai \u2192 Kolkata'],
+  ['New Delhi (NDLS)','KSR Bengaluru City (SBC)','Delhi \u2192 Bengaluru'],
+  ['Mumbai CST (CSTM)','Pune Junction (PUNE)','Mumbai \u2192 Pune'],
+  ['New Delhi (NDLS)','Jaipur Junction (JP)','Delhi \u2192 Jaipur'],
+  ['New Delhi (NDLS)','Lucknow Charbagh (LKO)','Delhi \u2192 Lucknow'],
+  ['Chennai Central (MAS)','KSR Bengaluru City (SBC)','Chennai \u2192 Bengaluru']
+];
+var trendDiv = document.getElementById('trending-routes');
+for (var ri = 0; ri < routes.length; ri++) {
+  (function(r) {
+    var span = document.createElement('span');
+    span.className = 'tpill';
+    span.textContent = r[2];
+    span.onclick = function() {
+      document.getElementById('src').value = r[0];
+      document.getElementById('dst').value = r[1];
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+    trendDiv.appendChild(span);
+  })(routes[ri]);
+}
+
+var news = [
+  ['New Vande Bharat trains launched on 10 new routes starting December 2024','Dec 5, 2024'],
+  ['IRCTC introduces AI-powered seat selection for premium classes','Dec 3, 2024'],
+  ['Tatkal booking window updated: Now opens at 10 AM for AC classes','Dec 1, 2024'],
+  ['Special holiday trains announced for Christmas and New Year','Nov 28, 2024'],
+  ['Refund processing time reduced to 3-5 working days','Nov 25, 2024']
+];
+var nc = document.getElementById('news-container');
+for (var ni = 0; ni < news.length; ni++) {
+  var div = document.createElement('div');
+  div.className = 'news-item';
+  div.innerHTML = '<div style="font-size:13px;color:var(--text)">&#128204; ' + news[ni][0] + '</div>'
+    + '<span style="font-size:11px;color:var(--muted);white-space:nowrap">' + news[ni][1] + '</span>';
+  nc.appendChild(div);
+}
+
+var allTrains = TRAINS.slice(), currentSrc = '', currentDst = '', currentDt = '';
+
+function doSearch() {
+  currentSrc = document.getElementById('src').value;
+  currentDst = document.getElementById('dst').value;
+  currentDt = document.getElementById('jdate').value;
+  allTrains = TRAINS.slice();
+  var dateStr = currentDt ? new Date(currentDt + 'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : '';
+  document.getElementById('results-area').classList.remove('hidden');
+  document.getElementById('results-heading').textContent = allTrains.length + ' trains \u2014 ' + currentSrc.split('(')[0].trim() + ' \u2192 ' + currentDst.split('(')[0].trim();
+  renderResults(dateStr);
+  document.getElementById('results-area').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderResults(dateStr) {
+  var html = '';
+  for (var i = 0; i < allTrains.length; i++) {
+    html += renderTrainCard(allTrains[i], currentSrc, currentDst, dateStr);
+  }
+  document.getElementById('train-list').innerHTML = html;
+}
+
+function filterTrains(type, el) {
+  document.querySelectorAll('[data-type]').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
+  allTrains = type ? TRAINS.filter(function(t){return t.type===type;}) : TRAINS.slice();
+  var dateStr = currentDt ? new Date(currentDt+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : '';
+  renderResults(dateStr);
+}
+
+function sortTrains(by) {
+  allTrains.sort(function(a,b){
+    return (by==='dep'?a.dep:by==='arr'?a.arr:a.dur).localeCompare(by==='dep'?b.dep:by==='arr'?b.arr:b.dur);
+  });
+  var dateStr = currentDt ? new Date(currentDt+'T00:00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'}) : '';
+  renderResults(dateStr);
+}
+</script>
+</body>
+</html>

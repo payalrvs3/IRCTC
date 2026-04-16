@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Services — IRCTC</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.svc-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:1.75rem;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.svc-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.1);border-color:#c7d7fc;transform:translateY(-3px)}
+.svc-icon-big{font-size:40px;margin-bottom:12px}
+.svc-card h3{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:var(--dark);margin-bottom:6px}
+.svc-card p{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.svc-btn{background:var(--light);color:var(--blue);border:none;padding:7px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans',sans-serif;transition:.15s}
+.svc-btn:hover{background:var(--blue);color:#fff}
+.svc-badge{position:absolute;top:12px;right:12px;background:var(--orange);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.live-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+.train-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.train-row:last-child{border-bottom:none}
+.status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot-yellow{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+.dot-gray{background:#cbd5e1}
+.menu-tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:#fff;border-radius:10px;padding:5px;border:1px solid var(--border);width:fit-content;flex-wrap:wrap}
+.mtab{padding:8px 20px;border-radius:7px;border:none;background:transparent;font-size:13px;font-weight:600;cursor:pointer;font-family:'Noto Sans',sans-serif;color:var(--muted);transition:.15s}
+.mtab.active{background:var(--blue);color:#fff}
+.food-card{background:#fff;border-radius:10px;border:1px solid var(--border);overflow:hidden;transition:.2s}
+.food-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.food-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:48px}
+.food-info{padding:12px}
+.food-name{font-weight:700;font-size:14px;color:var(--dark)}
+.food-price{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--blue)}
+.add-btn{background:var(--orange);color:#fff;border:none;padding:5px 14px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
+.tour-card{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;transition:.2s}
+.tour-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-2px)}
+.tour-header{padding:1.5rem;color:#fff}
+.pass-option{background:var(--light);border-radius:8px;padding:10px;text-align:center}
+.concession-row{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#f8fafc;border-radius:8px;border:1px solid var(--border);margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<div id="nav-placeholder"></div>
+
+<div class="hero" style="padding-bottom:16px">
+  <h1 class="hero-title">IRCTC Services</h1>
+  <p class="hero-sub">All your railway services — booking, travel, dining, and more</p>
+</div>
+
+<div class="section">
+  <div class="menu-tabs">
+    <button class="mtab active" onclick="showSvc('all',this)">All Services</button>
+    <button class="mtab" onclick="showSvc('travel',this)">Travel Info</button>
+    <button class="mtab" id="tab-catering" onclick="showSvc('catering',this)">e-Catering</button>
+    <button class="mtab" onclick="showSvc('tourism',this)">Tourism</button>
+    <button class="mtab" onclick="showSvc('passes',this)">Passes</button>
+  </div>
+
+  <!-- ALL SERVICES -->
+  <div id="svc-all">
+    <div class="sec-title">🚆 <span>Travel Services</span></div>
+    <div id="all-services-grid" class="grid4" style="margin-bottom:2rem"></div>
+  </div>
+
+  <!-- LIVE TRAIN STATUS -->
+  <div id="svc-travel" class="hidden">
+    <div class="sec-title">📍 <span>Live Train Status</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div class="live-card">
+        <div style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Track Your Train</div>
+        <div class="igrp" style="margin-bottom:10px">
+          <label>Train Number / Name</label>
+          <input type="text" id="track-train" placeholder="e.g. 12301 or Rajdhani">
+        </div>
+        <div class="igrp" style="margin-bottom:14px">
+          <label>Date</label>
+          <input type="date" id="track-date">
+        </div>
+        <button onclick="trackTrain()" class="btn-blue-full" style="margin-top:0">🔍 Track Train</button>
+        <div id="track-result" class="hidden" style="margin-top:16px">
+          <div style="background:var(--light);border-radius:8px;padding:12px;margin-bottom:12px">
+            <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--dark)">12301 · Howrah Rajdhani Express</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
+              <div class="status-dot dot-green"></div>
+              <span style="font-size:13px;font-weight:600;color:var(--green)">Running On Time</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">Last updated: 2 minutes ago</div>
+          </div>
+          <div id="route-stops"></div>
+        </div>
+      </div>
+      <div>
+        <div class="live-card" style="margin-bottom:14px">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;margin-bottom:12px">Running Trains Status</div>
+          <div id="running-trains"></div>
+        </div>
+        <div class="live-card">
+          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;margin-bottom:12px">🚉 Platform Info — CSTM</div>
+          <div id="platform-info"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E-CATERING -->
+  <div id="svc-catering" class="hidden">
+    <div class="sec-title">🍽️ <span>e-Catering — Order Food on Train</span></div>
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr 160px;gap:10px;align-items:end">
+        <div class="igrp"><label>PNR Number</label><input type="text" placeholder="10-digit PNR"></div>
+        <div class="igrp">
+          <label>Station (Delivery Point)</label>
+          <select>
+            <option>Select station</option>
+            <option>Mumbai CST</option><option>Nashik Road</option>
+            <option>Bhusaval</option><option>New Delhi</option>
+          </select>
+        </div>
+        <button class="sbtn" onclick="alert('Showing menu for selected station')">Find Menu</button>
+      </div>
+    </div>
+    <div class="sec-title" style="font-size:18px">🍛 <span>Popular Items</span></div>
+    <div id="food-grid" class="grid4"></div>
+  </div>
+
+  <!-- TOURISM -->
+  <div id="svc-tourism" class="hidden">
+    <div class="sec-title">🏔️ <span>Rail Tourism Packages</span></div>
+    <div id="tour-grid" class="grid3"></div>
+  </div>
+
+  <!-- PASSES -->
+  <div id="svc-passes" class="hidden">
+    <div class="sec-title">🎫 <span>Passes &amp; Concessions</span></div>
+    <div class="grid2" style="margin-bottom:1.5rem">
+      <div class="card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;margin-bottom:12px;color:var(--dark)">📅 Season Pass</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Unlimited travel between two stations for daily commuters. Available in Monthly, Quarterly, and Half-Yearly variants.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px" id="pass-options"></div>
+        <button class="btn-blue-full" style="margin-top:0">Apply for Season Pass</button>
+      </div>
+      <div class="card">
+        <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;margin-bottom:12px;color:var(--dark)">🎓 Concessions</div>
+        <div id="concessions-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<div id="modals-placeholder"></div>
+
+<script src="shared.js"></script>
+<script>
+document.getElementById('nav-placeholder').innerHTML = navbar('services');
+document.getElementById('footer-placeholder').innerHTML = footer();
+document.getElementById('modals-placeholder').innerHTML = loginModal();
+
+var td = new Date();
+document.getElementById('track-date').valueAsDate = td;
+
+// ---- ALL SERVICES GRID ----
+var allServices = [
+  {icon:'📍', name:'Live Train Status', desc:'Track your train in real-time', badge:'Live', action:function(){showSvc('travel',null);}},
+  {icon:'🍽️', name:'e-Catering', desc:'Order food delivered to your seat', badge:'New', action:function(){showSvc('catering',null);}},
+  {icon:'🚉', name:'Platform Info', desc:'Know which platform your train arrives at', badge:'', action:function(){showSvc('travel',null);}},
+  {icon:'🔔', name:'Train Alert', desc:'SMS & email alerts for delays', badge:'', action:function(){alert('Set train alerts from the travel info tab');}},
+  {icon:'📅', name:'Season Pass', desc:'Monthly & quarterly commuter passes', badge:'', action:function(){showSvc('passes',null);}},
+  {icon:'♿', name:'Divyaang Booking', desc:'Special booking for differently-abled', badge:'', action:function(){showSvc('passes',null);}},
+  {icon:'🏔️', name:'Tour Packages', desc:'Curated rail tours across India', badge:'', action:function(){showSvc('tourism',null);}},
+  {icon:'🎫', name:'Retiring Rooms', desc:'Station rooms for short stays', badge:'', action:function(){alert('Visit any major railway station enquiry counter');}},
+];
+var svcGrid = document.getElementById('all-services-grid');
+allServices.forEach(function(s) {
+  var div = document.createElement('div');
+  div.className = 'svc-card';
+  div.onclick = s.action;
+  div.innerHTML = '<div class="svc-icon-big">' + s.icon + '</div>'
+    + '<h3>' + s.name + '</h3>'
+    + '<p>' + s.desc + '</p>'
+    + '<button class="svc-btn">Explore</button>'
+    + (s.badge ? '<div class="svc-badge">' + s.badge + '</div>' : '');
+  svcGrid.appendChild(div);
+});
+
+// ---- RUNNING TRAINS ----
+var runningTrains = [
+  {num:'12301 Howrah Rajdhani', status:'15 min late', route:'NDLS → CSTM', color:'yellow'},
+  {num:'12951 Mumbai Rajdhani', status:'On time',     route:'CSTM → NDLS', color:'green'},
+  {num:'22209 Duronto',         status:'32 min late', route:'CSTM → HWH',  color:'yellow'},
+  {num:'12137 Punjab Mail',     status:'On time',     route:'CSTM → NDLS', color:'green'},
+];
+var rtDiv = document.getElementById('running-trains');
+runningTrains.forEach(function(t) {
+  var div = document.createElement('div');
+  div.className = 'train-row';
+  div.innerHTML = '<div class="status-dot dot-' + t.color + '"></div>'
+    + '<div style="flex:1"><div style="font-weight:600;font-size:13px">' + t.num + '</div>'
+    + '<div style="font-size:11px;color:var(--muted)">' + t.route + '</div></div>'
+    + '<span class="badge ' + (t.color === 'green' ? 'green' : 'yellow') + '">' + t.status + '</span>';
+  rtDiv.appendChild(div);
+});
+
+// ---- PLATFORM INFO ----
+var platforms = [
+  {pf:'Platform 1', train:'12951 Mumbai Rajdhani', time:'17:40', status:'On time'},
+  {pf:'Platform 3', train:'12137 Punjab Mail',     time:'19:05', status:'Delayed 20 min'},
+  {pf:'Platform 5', train:'22209 Duronto',         time:'23:10', status:'On time'},
+  {pf:'Platform 7', train:'12261 Howrah Duronto',  time:'08:15', status:'On time'},
+];
+var pfDiv = document.getElementById('platform-info');
+platforms.forEach(function(p) {
+  var div = document.createElement('div');
+  div.className = 'train-row';
+  div.innerHTML = '<div style="background:var(--blue);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;white-space:nowrap">' + p.pf + '</div>'
+    + '<div style="flex:1;margin-left:4px"><div style="font-weight:600;font-size:12px">' + p.train + '</div>'
+    + '<div style="font-size:11px;color:var(--muted)">' + p.time + '</div></div>'
+    + '<span style="font-size:11px;font-weight:700;color:' + (p.status.includes('Delayed') ? 'var(--yellow)' : 'var(--green)') + '">' + p.status + '</span>';
+  pfDiv.appendChild(div);
+});
+
+// ---- ROUTE STOPS ----
+var routeStops = [
+  {st:'Mumbai CST',   time:'16:35', status:'Departed',    type:'dep'},
+  {st:'Thane',        time:'17:05', status:'Departed',    type:'dep'},
+  {st:'Kalyan',       time:'17:30', status:'Departed',    type:'dep'},
+  {st:'Nashik Road',  time:'19:45', status:'Running On Time', type:'on'},
+  {st:'Bhusaval',     time:'22:00', status:'Expected 22:15', type:'delay'},
+  {st:'Itarsi',       time:'02:30', status:'Expected',    type:'exp'},
+  {st:'Bhopal',       time:'04:40', status:'Expected',    type:'exp'},
+  {st:'New Delhi',    time:'10:05', status:'Expected',    type:'exp'},
+];
+var stopsDiv = document.getElementById('route-stops');
+routeStops.forEach(function(s, i) {
+  var div = document.createElement('div');
+  div.className = 'train-row';
+  if (i === 3) { div.style.cssText = 'background:#f0fff4;margin:0 -14px;padding:12px 14px'; }
+  var dotColor = s.type === 'dep' || s.type === 'on' ? 'dot-green' : s.type === 'delay' ? 'dot-yellow' : 'dot-gray';
+  var timeColor = s.type === 'delay' ? 'var(--yellow)' : (s.type === 'dep' || s.type === 'on') ? 'var(--green)' : 'var(--muted)';
+  div.innerHTML = '<div class="status-dot ' + dotColor + '"></div>'
+    + '<div style="flex:1"><div style="font-weight:600;font-size:13px">' + s.st + '</div>'
+    + '<div style="font-size:11px;color:var(--muted)">' + s.status + '</div></div>'
+    + '<div style="font-family:\'Rajdhani\',sans-serif;font-weight:700;font-size:14px;color:' + timeColor + '">' + s.time + '</div>';
+  stopsDiv.appendChild(div);
+});
+
+// ---- FOOD MENU ----
+var foodItems = [
+  {icon:'🍱', name:'Thali Meal',     desc:'Full veg meal with rice, dal, roti & pickle',       price:'₹120', bg:'#fef3c7'},
+  {icon:'🍔', name:'Burger Combo',   desc:'Veg/Non-veg burger with fries and cold drink',       price:'₹180', bg:'#fee2e2'},
+  {icon:'🍜', name:'Rajma Chawal',   desc:'Creamy rajma curry with steamed basmati rice',       price:'₹90',  bg:'#dcfce7'},
+  {icon:'🧃', name:'Juice Combo',    desc:'Fresh fruit juice + 2 biscuit packs',                price:'₹60',  bg:'#e0f2fe'},
+  {icon:'🍕', name:'Pizza Slice',    desc:'Cheese and veg pizza, freshly baked',                price:'₹100', bg:'#fce7f3'},
+  {icon:'☕', name:'Breakfast Set',  desc:'Poha / upma + chai / coffee + toast',                price:'₹75',  bg:'#fef9c3'},
+  {icon:'🍛', name:'Biryani',        desc:'Aromatic veg/chicken biryani with raita',            price:'₹150', bg:'#f3e8ff'},
+  {icon:'🍰', name:'Dessert Pack',   desc:'Gulab jamun or kheer — 2 pieces',                    price:'₹50',  bg:'#ffe4e6'},
+];
+var foodGrid = document.getElementById('food-grid');
+foodItems.forEach(function(f) {
+  var div = document.createElement('div');
+  div.className = 'food-card';
+  div.innerHTML = '<div class="food-img" style="background:' + f.bg + '">' + f.icon + '</div>'
+    + '<div class="food-info">'
+    + '<div class="food-name">' + f.name + '</div>'
+    + '<div style="font-size:11px;color:var(--muted);margin:4px 0 8px;line-height:1.4">' + f.desc + '</div>'
+    + '<div style="display:flex;justify-content:space-between;align-items:center">'
+    + '<div class="food-price">' + f.price + '</div>'
+    + '<button class="add-btn" onclick="alert(\'Added ' + f.name + ' to cart!\')">Add +</button>'
+    + '</div></div>';
+  foodGrid.appendChild(div);
+});
+
+// ---- TOUR PACKAGES ----
+var tours = [
+  {icon:'🕌', name:'Golden Triangle Tour',       route:'Delhi → Agra → Jaipur → Delhi',      duration:'5N/6D', price:'₹12,999/person', desc:'Rail + 3-star hotel + breakfast + sightseeing', gradient:'linear-gradient(135deg,#0a3d91,#1d6ee6)'},
+  {icon:'🏔️', name:'Kashmir on Rails',           route:'Delhi → Jammu → Srinagar',            duration:'7N/8D', price:'₹18,500/person', desc:'AC train + houseboat + all meals included',   gradient:'linear-gradient(135deg,#16a34a,#22c55e)'},
+  {icon:'🛕', name:'South India Pilgrimage',     route:'Chennai → Madurai → Rameswaram',      duration:'6N/7D', price:'₹9,500/person',  desc:'AC train + 3-star hotel + temple entry',      gradient:'linear-gradient(135deg,#d97706,#f59e0b)'},
+  {icon:'🌊', name:'Goa Beach Special',          route:'Mumbai → Goa → Mumbai',               duration:'3N/4D', price:'₹7,800/person',  desc:'Rail + beach resort + breakfast included',    gradient:'linear-gradient(135deg,#0891b2,#06b6d4)'},
+  {icon:'🌄', name:'Darjeeling Hill Tour',       route:'Kolkata → NJP → Darjeeling',          duration:'4N/5D', price:'₹11,200/person', desc:'Toy train ride + hill resort + breakfast',    gradient:'linear-gradient(135deg,#7c3aed,#a855f7)'},
+  {icon:'🏰', name:'Rajasthan Royal Tour',       route:'Jaipur → Jodhpur → Udaipur',          duration:'6N/7D', price:'₹15,000/person', desc:'Palace hotel + camel safari + boat ride',     gradient:'linear-gradient(135deg,#dc2626,#f87171)'},
+];
+var tourGrid = document.getElementById('tour-grid');
+tours.forEach(function(t) {
+  var div = document.createElement('div');
+  div.className = 'tour-card';
+  div.innerHTML = '<div class="tour-header" style="background:' + t.gradient + '">'
+    + '<div style="font-size:36px;margin-bottom:8px">' + t.icon + '</div>'
+    + '<div style="font-family:\'Rajdhani\',sans-serif;font-size:20px;font-weight:700">' + t.name + '</div>'
+    + '<div style="font-size:12px;opacity:.8;margin-top:4px">' + t.route + '</div>'
+    + '</div>'
+    + '<div style="padding:1.25rem">'
+    + '<div style="font-family:\'Rajdhani\',sans-serif;font-size:18px;font-weight:700;color:var(--blue);margin-bottom:2px">' + t.price + '</div>'
+    + '<div style="font-size:11px;color:var(--muted);margin-bottom:4px">' + t.duration + '</div>'
+    + '<div style="font-size:12px;color:var(--muted);margin-bottom:12px">' + t.desc + '</div>'
+    + '<button class="svc-btn" style="width:100%;padding:9px" onclick="alert(\'Booking for ' + t.name + '\')">Book Package →</button>'
+    + '</div>';
+  tourGrid.appendChild(div);
+});
+
+// ---- PASS OPTIONS ----
+var passOptions = [
+  {type:'Monthly', price:'Starting ₹250', duration:'1 Month'},
+  {type:'Quarterly', price:'Starting ₹650', duration:'3 Months'},
+  {type:'Half Yearly', price:'Starting ₹1,100', duration:'6 Months'},
+];
+var passDiv = document.getElementById('pass-options');
+passOptions.forEach(function(p) {
+  var div = document.createElement('div');
+  div.className = 'pass-option';
+  div.innerHTML = '<div style="font-weight:700;font-size:13px;color:var(--dark)">' + p.type + '</div>'
+    + '<div style="font-size:12px;color:var(--blue);font-weight:700;margin:2px 0">' + p.price + '</div>'
+    + '<div style="font-size:11px;color:var(--muted)">' + p.duration + '</div>';
+  passDiv.appendChild(div);
+});
+
+// ---- CONCESSIONS ----
+var concessions = [
+  {icon:'👴', title:'Senior Citizens', detail:'50% for women 58+, men 60+', cls:'All classes'},
+  {icon:'🎓', title:'Students',        detail:'75% on select trains',        cls:'Sleeper class'},
+  {icon:'♿', title:'Divyaang',        detail:'75% concession',               cls:'All classes'},
+  {icon:'🪖', title:'Ex-Servicemen',  detail:'50% concession',               cls:'All classes'},
+  {icon:'❤️', title:'Cancer Patients',detail:'75% concession',               cls:'All classes'},
+];
+var conDiv = document.getElementById('concessions-list');
+concessions.forEach(function(c) {
+  var div = document.createElement('div');
+  div.className = 'concession-row';
+  div.innerHTML = '<div><div style="font-weight:700;font-size:13px">' + c.icon + ' ' + c.title + '</div>'
+    + '<div style="font-size:11px;color:var(--muted)">' + c.detail + ' · ' + c.cls + '</div></div>'
+    + '<button class="svc-btn" style="white-space:nowrap">Apply</button>';
+  conDiv.appendChild(div);
+});
+
+// ---- TAB LOGIC ----
+function showSvc(id, tabEl) {
+  ['all','travel','catering','tourism','passes'].forEach(function(s) {
+    document.getElementById('svc-' + s).classList.add('hidden');
+  });
+  document.getElementById('svc-' + id).classList.remove('hidden');
+  document.querySelectorAll('.mtab').forEach(function(t) { t.classList.remove('active'); });
+  if (tabEl) {
+    tabEl.classList.add('active');
+  } else {
+    var map = {all:0, travel:1, catering:2, tourism:3, passes:4};
+    var tabs = document.querySelectorAll('.mtab');
+    if (tabs[map[id]]) tabs[map[id]].classList.add('active');
+  }
+}
+
+function trackTrain() {
+  var v = document.getElementById('track-train').value;
+  if (!v) { alert('Please enter a train number or name'); return; }
+  document.getElementById('track-result').classList.remove('hidden');
+}
+
+// Hash routing for quick services links
+if (location.hash) {
+  var hashMap = {'#live':'travel','#catering':'catering','#platform':'travel','#alert':'travel','#season':'passes','#tourism':'tourism','#divyaang':'passes'};
+  var target = hashMap[location.hash];
+  if (target) showSvc(target, null);
+}
+</script>
+</body>
+</html>

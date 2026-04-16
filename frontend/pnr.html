@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PNR Status — IRCTC</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+.pnr-card{background:#fff;border-radius:14px;border:1px solid var(--border);padding:2rem;max-width:720px;margin:0 auto;box-shadow:var(--card-shadow)}
+.pnr-input{flex:1;border:2px solid var(--border);border-radius:10px;padding:13px 16px;font-size:17px;letter-spacing:4px;outline:none;font-family:'Rajdhani',sans-serif;transition:border-color .15s,box-shadow .15s;width:100%}
+.pnr-input:focus{border-color:var(--blue2);box-shadow:0 0 0 3px rgba(29,110,230,.1)}
+.status-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+.status-table th{background:var(--light);color:var(--blue);padding:9px 12px;text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.status-table td{padding:9px 12px;border-bottom:1px solid var(--border)}
+.status-table tr:last-child td{border-bottom:none}
+.journey-map{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;background:#fafbff;border-radius:10px;padding:16px;margin:14px 0;gap:10px;border:1px solid var(--border)}
+.rec-chip{background:#fff;border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:1px;transition:.15s;display:inline-block;margin:3px}
+.rec-chip:hover{border-color:var(--blue2);color:var(--blue2)}
+.step-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px}
+.step-num{background:var(--blue);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+</style>
+</head>
+<body>
+<div id="nav-placeholder"></div>
+
+<div class="hero" style="padding-bottom:16px">
+  <h1 class="hero-title">PNR Status Check</h1>
+  <p class="hero-sub">Get real-time booking status for your PNR number</p>
+</div>
+
+<div class="section" style="max-width:760px">
+  <div class="pnr-card" style="margin-bottom:1.5rem">
+    <div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.7px">Enter 10-Digit PNR Number</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <input class="pnr-input" id="pnr-in" type="text" maxlength="10" placeholder="XXXXXXXXXX">
+      <button onclick="checkPNR()" class="btn-orange-full" style="margin-top:0;width:auto;padding:13px 28px;font-size:15px">Check Status</button>
+    </div>
+    <div style="margin-top:12px">
+      <span style="font-size:12px;color:var(--muted)">Recent:</span>
+      <div style="margin-top:6px" id="recent-searches"></div>
+    </div>
+  </div>
+
+  <div id="pnr-result" class="hidden" style="margin-bottom:1.5rem">
+    <div class="pnr-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+        <div>
+          <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">PNR Number</div>
+          <div id="r-pnr" style="font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:var(--blue);letter-spacing:3px"></div>
+        </div>
+        <span class="badge green" id="r-badge">&#10003; Confirmed</span>
+      </div>
+      <div id="r-trainname" style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--dark);margin-bottom:12px"></div>
+      <div class="journey-map">
+        <div>
+          <div id="r-dep" style="font-size:22px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--dark)"></div>
+          <div style="font-size:14px;font-weight:700;color:var(--blue2)" id="r-src">CSTM</div>
+          <div style="font-size:11px;color:var(--muted)" id="r-srcname">Mumbai CST</div>
+        </div>
+        <div style="text-align:center">
+          <div id="r-duration" style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px"></div>
+          <div style="display:flex;align-items:center;gap:4px">
+            <div class="tdot"></div><div class="tline" style="width:70px"></div><div class="tdot"></div>
+          </div>
+          <div id="r-date" style="font-size:11px;color:var(--muted);margin-top:4px"></div>
+        </div>
+        <div style="text-align:right">
+          <div id="r-arr" style="font-size:22px;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--dark)"></div>
+          <div style="font-size:14px;font-weight:700;color:var(--blue2)" id="r-dst">NDLS</div>
+          <div style="font-size:11px;color:var(--muted)" id="r-dstname">New Delhi</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:12px;background:#f8fafc;border-radius:9px;padding:12px;border:1px solid var(--border);margin-bottom:14px">
+        <div><div style="color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;font-size:10px;margin-bottom:3px">Class</div><div id="r-class" style="font-weight:700;color:var(--dark);font-size:13px"></div></div>
+        <div><div style="color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;font-size:10px;margin-bottom:3px">Quota</div><div style="font-weight:700;color:var(--dark);font-size:13px">General (GN)</div></div>
+        <div><div style="color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;font-size:10px;margin-bottom:3px">Chart Status</div><div style="font-weight:700;color:var(--yellow);font-size:13px">Not Prepared</div></div>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px">Passenger Status</div>
+      <table class="status-table">
+        <thead><tr><th>#</th><th>Passenger</th><th>Age</th><th>Booked</th><th>Current Status</th></tr></thead>
+        <tbody id="pax-tbody"></tbody>
+      </table>
+      <div style="margin-top:12px;padding:10px 14px;background:var(--yellow-bg);border-radius:8px;font-size:12px;color:var(--yellow);border:1px solid #fde68a">
+        &#9200; Chart not yet prepared. Status may change closer to departure.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px">
+        <button onclick="checkPNR()" style="background:var(--blue);color:#fff;border:none;padding:11px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;font-family:'Rajdhani',sans-serif">&#128260; Refresh</button>
+        <button onclick="alert('SMS alert set for PNR ' + document.getElementById('pnr-in').value)" style="background:#f1f5f9;border:1px solid var(--border);padding:11px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;font-family:'Rajdhani',sans-serif">&#128241; SMS Alert</button>
+        <button onclick="window.location='services.html'" style="background:#f1f5f9;border:1px solid var(--border);padding:11px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;font-family:'Rajdhani',sans-serif">&#127869; Order Food</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="pnr-card">
+    <div class="sec-title" style="margin-bottom:14px">&#10067; <span>How to Check PNR Status</span></div>
+    <div id="steps-container"></div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<div id="modals-placeholder"></div>
+
+<script src="shared.js"></script>
+<script>
+document.getElementById('nav-placeholder').innerHTML = navbar('pnr');
+document.getElementById('footer-placeholder').innerHTML = footer();
+document.getElementById('modals-placeholder').innerHTML = loginModal();
+
+var recentPNRs = ['4811234567','2671098765','6354321098'];
+var recentDiv = document.getElementById('recent-searches');
+recentPNRs.forEach(function(pnr) {
+  var span = document.createElement('span');
+  span.className = 'rec-chip';
+  span.textContent = pnr;
+  span.onclick = function() { fillPNR(pnr); };
+  recentDiv.appendChild(span);
+});
+
+var steps = [
+  ['Find your PNR','Your 10-digit PNR is on your booking confirmation email, SMS, or ticket printout.'],
+  ['Enter the PNR','Type or paste your PNR number in the field above and click Check Status.'],
+  ['View your status','See real-time Confirmed / WL / RAC status for all passengers in your booking.'],
+  ['Set up alerts','Enable SMS alerts to get notified automatically when your status changes.']
+];
+var stepsDiv = document.getElementById('steps-container');
+steps.forEach(function(s, i) {
+  var div = document.createElement('div');
+  div.className = 'step-row';
+  div.innerHTML = '<div class="step-num">' + (i+1) + '</div>'
+    + '<div><div style="font-weight:600;font-size:14px;color:var(--dark);margin-bottom:2px">' + s[0] + '</div>'
+    + '<div style="font-size:13px;color:var(--muted)">' + s[1] + '</div></div>';
+  stepsDiv.appendChild(div);
+});
+
+var samplePax = [
+  {n:'Passenger 1',age:32,booked:'B2/34 (LB)',current:'CNF \u2014 B2/34',cnf:true},
+  {n:'Passenger 2',age:28,booked:'WL/14',current:'CNF \u2014 B2/56',cnf:true},
+  {n:'Passenger 3',age:55,booked:'WL/15',current:'WL/3',cnf:false}
+];
+
+function fillPNR(v) { document.getElementById('pnr-in').value = v; checkPNR(); }
+
+function checkPNR() {
+  var v = document.getElementById('pnr-in').value.trim();
+  if (v.length < 5) { alert('Please enter a valid PNR number (10 digits)'); return; }
+  var t = TRAINS[Math.floor(Math.random() * TRAINS.length)];
+  var dt = new Date(); dt.setDate(dt.getDate() + parseInt(v.slice(-1)) + 2);
+  var dateStr = dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+  document.getElementById('r-pnr').textContent = v;
+  document.getElementById('r-trainname').textContent = t.number + ' \u00b7 ' + t.name;
+  document.getElementById('r-dep').textContent = t.dep;
+  document.getElementById('r-arr').textContent = t.arr;
+  document.getElementById('r-duration').textContent = t.dur;
+  document.getElementById('r-date').textContent = dateStr;
+  document.getElementById('r-class').textContent = t.avail[0] ? t.avail[0].label + ' (' + t.avail[0].cls + ')' : '3A';
+  var tbody = document.getElementById('pax-tbody');
+  tbody.innerHTML = '';
+  samplePax.forEach(function(p, i) {
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + (i+1) + '</td>'
+      + '<td style="font-weight:500">' + p.n + '</td>'
+      + '<td>' + p.age + '</td>'
+      + '<td>' + p.booked + '</td>'
+      + '<td style="font-weight:700;color:' + (p.cnf ? 'var(--green)' : 'var(--yellow)') + '">' + p.current + '</td>';
+    tbody.appendChild(tr);
+  });
+  document.getElementById('pnr-result').classList.remove('hidden');
+  document.getElementById('pnr-result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
