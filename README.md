@@ -1,6 +1,8 @@
 # IRCTC Booking System
 
-A full-featured Indian Railways ticket booking backend built with **Django 4.x + Django REST Framework + JWT Auth**.
+A scalable backend system inspired by the Indian Railways ticketing platform (IRCTC), designed to handle **train search, seat availability, ticket booking, PNR tracking, and user management**.
+
+Built using **Django REST Framework**, this project demonstrates real-world backend architecture including authentication, modular API design, and complex business logic.
 
 ---
 
